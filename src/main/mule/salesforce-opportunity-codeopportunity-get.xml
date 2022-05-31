@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<sub-flow name="subflow-salesforce-opportunity-codeopportunity-get" doc:id="28292036-0cdc-4e0a-b824-cc1958269008" >
+		<set-variable value="#[attributes.uriParams.'code-opportunity']" doc:name="codigo-oportunidad" doc:id="cad05c10-6ad3-480d-8809-32633a4384df" variableName="code-opportunity" />
+		<salesforce:query doc:name="Query_Oprtunidad" doc:id="45daaa83-e8d8-48ba-9797-403af3eb20db" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[SELECT Id FROM Opportunity WHERE SP_Id__c = ':CODIGO_OPORTUNIDAD']]></salesforce:salesforce-query>
+			<salesforce:parameters><![CDATA[#[output application/java
+---
+{
+	CODIGO_OPORTUNIDAD : vars."code-opportunity"
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<set-variable value="#[payload[0].Id]" doc:name="id-oportunidad" doc:id="5d3c9f73-b3fa-41c0-98d7-ddb5e3318fc2" variableName="id-oportunidad" />
+		<salesforce:query doc:name="Query_Select_file_oprtunidad" doc:id="17cd8bf3-8ac0-4307-8ed7-b07aea823d70" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = ':ID_OPORTUNIDAD'
+]]></salesforce:salesforce-query>
+			<salesforce:parameters><![CDATA[#[output application/java
+---
+{
+	ID_OPORTUNIDAD : vars."id-oportunidad"
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;[] as Array]" doc:name="aOpprtunity" doc:id="3def3fac-d1c6-4a82-b0b4-026f949abc8f" variableName="aOpprtunity"/>
+		<foreach doc:name="For Each" doc:id="f006d7c3-3723-4ee9-95fc-8441581470d2" collection="payload">
+			<ee:transform doc:name="Transform Message" doc:id="c06d075e-480a-41bf-8476-97020bed1b55" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="aOpprtunity" ><![CDATA[%dw 2.0
+output application/json
+---
+flatten(vars.*aOpprtunity ++ [{"ContentDocumentId": payload.ContentDocumentId}])]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
+		<ee:transform doc:name="Transform Message" doc:id="427a0013-2218-4b03-8606-3ac5f8142c54" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.aOpprtunity]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>
