@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
+	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<sub-flow name="subflow-salesforce-opportunity-codeopportunity-get" doc:id="28292036-0cdc-4e0a-b824-cc1958269008" >
-		<set-variable value="#[attributes.uriParams.'code-opportunity']" doc:name="codigo-oportunidad" doc:id="cad05c10-6ad3-480d-8809-32633a4384df" variableName="code-opportunity" />
-		<salesforce:query doc:name="Query_Oprtunidad" doc:id="45daaa83-e8d8-48ba-9797-403af3eb20db" config-ref="Salesforce_Config">
+		<json-logger:logger doc:name="START FLOW DOWNLOAD FILE OPPORTUNITY" doc:id="26e7f461-c0ad-4174-842d-6bf6f1b2d15e" config-ref="JSON_Logger_Config" message="START FLOW DOWNLOAD FILE OPPORTUNITYSTART FLOW DOWNLOAD FILE OPPORTUNITY"/>
+		<set-variable value="#[attributes.uriParams.'code-opportunity' default '']" doc:name="codigo-oportunidad" doc:id="cad05c10-6ad3-480d-8809-32633a4384df" variableName="code-opportunity" />
+		<json-logger:logger doc:name="FLOW CODE OPORTUNIDAD" doc:id="4cc3747a-2294-42d9-bf0b-fae053bc3979" config-ref="JSON_Logger_Config" message="#['FLOW codigo-oprtunidad:' ++ vars.&quot;code-opportunity&quot; default '']" tracePoint="FLOW" priority="DEBUG"/>
+		<salesforce:query doc:name="Query_Oportunidad" doc:id="45daaa83-e8d8-48ba-9797-403af3eb20db" config-ref="Salesforce_Config">
 			<salesforce:salesforce-query><![CDATA[SELECT Id FROM Opportunity WHERE SP_Id__c = ':CODIGO_OPORTUNIDAD']]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/java
 ---
@@ -15,8 +20,9 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	CODIGO_OPORTUNIDAD : vars."code-opportunity"
 }]]]></salesforce:parameters>
 		</salesforce:query>
-		<set-variable value="#[payload[0].Id]" doc:name="id-oportunidad" doc:id="5d3c9f73-b3fa-41c0-98d7-ddb5e3318fc2" variableName="id-oportunidad" />
-		<salesforce:query doc:name="Query_Select_file_oprtunidad" doc:id="17cd8bf3-8ac0-4307-8ed7-b07aea823d70" config-ref="Salesforce_Config">
+		<set-variable value="#[payload[0].Id default '']" doc:name="id-oportunidad" doc:id="5d3c9f73-b3fa-41c0-98d7-ddb5e3318fc2" variableName="id-oportunidad" />
+		<json-logger:logger doc:name="FLOW IDOPORTUNIDAD" doc:id="1b566a21-8b74-4e82-824e-4cca348c2d07" config-ref="JSON_Logger_Config" message="#['FLOW id-oprtunidad:' ++ vars.&quot;id-oportunidad&quot; default '']" tracePoint="FLOW" priority="DEBUG" />
+		<salesforce:query doc:name="Query_Select_file_oportunidad" doc:id="17cd8bf3-8ac0-4307-8ed7-b07aea823d70" config-ref="Salesforce_Config">
 			<salesforce:salesforce-query><![CDATA[SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = ':ID_OPORTUNIDAD'
 ]]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/java
@@ -25,26 +31,47 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	ID_OPORTUNIDAD : vars."id-oportunidad"
 }]]]></salesforce:parameters>
 		</salesforce:query>
-		<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;[] as Array]" doc:name="aOpprtunity" doc:id="3def3fac-d1c6-4a82-b0b4-026f949abc8f" variableName="aOpprtunity"/>
-		<foreach doc:name="For Each" doc:id="f006d7c3-3723-4ee9-95fc-8441581470d2" collection="payload">
-			<ee:transform doc:name="Transform Message" doc:id="c06d075e-480a-41bf-8476-97020bed1b55" >
-				<ee:message >
+		<choice doc:name="Choice" doc:id="3f3a4679-cf0f-4f63-a113-6764a47f0775" >
+			<when expression='#[!isEmpty(payload)]'>
+				<json-logger:logger doc:name="FOUND OPPORTUNITY" doc:id="fb3b9b25-d9d8-41ac-bd26-d361749ce5c8" config-ref="JSON_Logger_Config" message="FOUND OPPORTUNITY" tracePoint="FLOW" priority="DEBUG"/>
+				<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;[] as Array]" doc:name="aOpprtunity" doc:id="3def3fac-d1c6-4a82-b0b4-026f949abc8f" variableName="aOpprtunity" />
+				<json-logger:logger doc:name="ID FILE" doc:id="49950952-fd54-4f1f-a7c3-fa4dfd3afe46" config-ref="JSON_Logger_Config" message="#['ID FICHERO DE LA OPRTUNIDAD ' ++ (vars.&quot;code-opportunity&quot; default '')]" tracePoint="FLOW" priority="DEBUG" />
+				<foreach doc:name="For Each" doc:id="f006d7c3-3723-4ee9-95fc-8441581470d2" collection="payload">
+			<ee:transform doc:name="Transform Message" doc:id="c06d075e-480a-41bf-8476-97020bed1b55">
+				<ee:message>
 				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="aOpprtunity" ><![CDATA[%dw 2.0
+				<ee:variables>
+					<ee:set-variable variableName="aOpprtunity"><![CDATA[%dw 2.0
 output application/json
 ---
 flatten(vars.*aOpprtunity ++ [{"ContentDocumentId": payload.ContentDocumentId}])]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</foreach>
-		<ee:transform doc:name="Transform Message" doc:id="427a0013-2218-4b03-8606-3ac5f8142c54" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+				<ee:transform doc:name="Transform Message" doc:id="427a0013-2218-4b03-8606-3ac5f8142c54">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 vars.aOpprtunity]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+			</when>
+			<otherwise >
+				<json-logger:logger doc:name="NO FOUND OPPORTUNITY" doc:id="b3a6ffa3-e513-4a42-8c55-124d584f668d" config-ref="JSON_Logger_Config" message="NO FOUND OPPORTUNITY" priority="WARN"/>
+				<cloudhub:create-notification doc:name="Create Notification" doc:id="2651f94c-a6b1-4b84-8957-f86101136f3b" config-ref="CloudHub_Config" domain="sapi-tcct-salesforce-v1" priority="WARN">
+					<cloudhub:message ><![CDATA[WARNING SALESFORCE OPORTUNITY:  codigo de oportunidad no existe]]></cloudhub:message>
+				</cloudhub:create-notification>
+				<ee:transform doc:name="Transform Message" doc:id="921c75ba-ee4f-4652-b491-34147378e651" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[]]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<json-logger:logger doc:name="END FLOW DOWNLOAD FILE OPPORTUNITY" doc:id="fd7f5589-bf96-4046-a7d4-b838e3cf399f" config-ref="JSON_Logger_Config" message="END FLOW DOWNLOAD FILE OPPORTUNITY" tracePoint="END" />
 	</sub-flow>
 </mule>
