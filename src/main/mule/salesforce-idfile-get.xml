@@ -52,7 +52,7 @@ output application/json
 			<otherwise >
 				<json-logger:logger doc:name="NOT FOUND FILE SALESFORCE" doc:id="e61004c3-5cff-46f3-8032-2e7f9e228db2" config-ref="JSON_Logger_Config" message="#['NOT FOUND FILE SALESFORCE ' ++ (vars.&quot;id-file&quot; default '')]" tracePoint="EXCEPTION" priority="WARN"/>
 				<cloudhub:create-notification doc:name="Create Notification" doc:id="d81de54b-1c6f-4b1f-b55e-e4e4d1fb1e59" priority="WARN" domain="sapi-tcct-salesforce-v1" config-ref="CloudHub_Config">
-					<cloudhub:message ><![CDATA[WARNING SALESFORCE OPORTUNITY:  id-file no existe en salesforce]]></cloudhub:message>
+					<cloudhub:message ><![CDATA[#['WARNING SALESFORCE OPORTUNITY:  id-file ' ++ vars."id-file" ++ ' no existe en salesforce']]]></cloudhub:message>
 				</cloudhub:create-notification>
 				<ee:transform doc:name="Transform Message" doc:id="7f3b533a-464c-4d4a-8c6c-120a15b7e3f4" >
 					<ee:message >
@@ -60,10 +60,10 @@ output application/json
 output application/json
 ---
 {
-  "fileName": '',
-  "fileExtension": '',
+  "fileName": 'id file no existe',
+  "fileExtension": 'id file no existe',
   "bytes": '',
-  "type-bytes": ""
+  "type-bytes": "id file no existe"
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
