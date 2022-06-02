@@ -21,7 +21,7 @@ http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule
 }]]]></salesforce:parameters>
 		</salesforce:query>
 			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="24920560-220b-43e5-a6a7-81daad8603fc" >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="24920560-220b-43e5-a6a7-81daad8603fc" when='error.cause.message contains "invalid ID field"'>
 					<ee:transform doc:name="Transform Message" doc:id="4b805e71-8c60-4113-a341-30b407ec0972" >
 						<ee:message >
 							<ee:set-payload ><![CDATA[%dw 2.0
@@ -50,10 +50,6 @@ output application/json
 		</ee:transform>
 			</when>
 			<otherwise >
-				<json-logger:logger doc:name="NOT FOUND FILE SALESFORCE" doc:id="e61004c3-5cff-46f3-8032-2e7f9e228db2" config-ref="JSON_Logger_Config" message="#['NOT FOUND FILE SALESFORCE ' ++ (vars.&quot;id-file&quot; default '')]" tracePoint="EXCEPTION" priority="WARN"/>
-				<cloudhub:create-notification doc:name="Create Notification" doc:id="d81de54b-1c6f-4b1f-b55e-e4e4d1fb1e59" priority="WARN" domain="sapi-tcct-salesforce-v1" config-ref="CloudHub_Config">
-					<cloudhub:message ><![CDATA[#['WARNING SALESFORCE OPORTUNITY:  id-file ' ++ vars."id-file" ++ ' no existe en salesforce']]]></cloudhub:message>
-				</cloudhub:create-notification>
 				<ee:transform doc:name="Transform Message" doc:id="7f3b533a-464c-4d4a-8c6c-120a15b7e3f4" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0

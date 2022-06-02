@@ -58,10 +58,6 @@ vars.aOpprtunity]]></ee:set-payload>
 		</ee:transform>
 			</when>
 			<otherwise >
-				<json-logger:logger doc:name="NO FOUND OPPORTUNITY" doc:id="b3a6ffa3-e513-4a42-8c55-124d584f668d" config-ref="JSON_Logger_Config" message="NO FOUND OPPORTUNITY" priority="WARN"/>
-				<cloudhub:create-notification doc:name="Create Notification" doc:id="2651f94c-a6b1-4b84-8957-f86101136f3b" config-ref="CloudHub_Config" domain="sapi-tcct-salesforce-v1" priority="WARN">
-					<cloudhub:message ><![CDATA[#['WARNING SALESFORCE OPORTUNITY:  codigo de oportunidad ' ++ vars."code-opportunity" default '' ++  ' no existe']]]></cloudhub:message>
-				</cloudhub:create-notification>
 				<ee:transform doc:name="Transform Message" doc:id="921c75ba-ee4f-4652-b491-34147378e651" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0

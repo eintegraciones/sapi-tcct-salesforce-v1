@@ -27,7 +27,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 			</tls:context>
 		</http:listener-connection>
 	</http:listener-config>
-	<global-property doc:name="Global Property" doc:id="21a86305-6290-41ef-b6cc-7ea13dafcc61" name="autodiscoveryID" value="0" />
+	<global-property doc:name="Global Property" doc:id="21a86305-6290-41ef-b6cc-7ea13dafcc61" name="autodiscoveryID" value="17870731" />
 	<api-gateway:autodiscovery apiId="${autodiscoveryID}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="3ea5fca5-23be-4b1d-a0f5-d7d89d541f05" flowRef="sapi-tcct-salesforce-main"/>
 	<global-property doc:name="Global Property" doc:id="9fe135ee-9de1-4c44-b61e-ead01cccc4ac" name="mule.env" value="int"/>
 	<configuration-properties doc:name="Configuration properties" doc:id="0067b555-fc30-4a78-9845-d8b86443fa0b" file="config/properties-${mule.env}.yaml" />
