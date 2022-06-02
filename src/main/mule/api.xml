@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
-http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
-http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
-	<flow name="sapi-tcct-salesforce-main">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
+    <flow name="sapi-tcct-salesforce-main">
         <http:listener path="${apiPath}" config-ref="HTTPS_Listener_config_standard">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
@@ -13,15 +11,15 @@ http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="sapi-tcct-salesforce-config" />
-		<error-handler>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="50eee8df-6ae7-4094-9ae0-b1f93ef037fc" when="vars.httpStatus &gt;= 500" >
-				<set-variable value="${app.name}" doc:name="domain_notification" doc:id="f5c9baea-2294-4a6d-af69-de8b3d99e429" variableName="domain_notification" />
-				<set-variable value='#["ERROR " ++ p("app.name") ++ ": " ++ error.description as String]' doc:name="message_notification" doc:id="1582ba1e-1f63-4670-89db-263749c097d4" variableName="message_notification" />
-				<cloudhub:create-notification domain='#[vars.domain_notification default "api-tcct-basic-template"]' doc:name="Create Notification" doc:id="69339848-e234-4d21-a151-33804180de49" priority="ERROR" >
-					<cloudhub:message ><![CDATA[#[vars.message_notification default ""]]]></cloudhub:message>
-				</cloudhub:create-notification>
-			</on-error-propagate>
-		</error-handler>
+        <error-handler>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="50eee8df-6ae7-4094-9ae0-b1f93ef037fc" when="vars.httpStatus &gt;= 500">
+                <set-variable value="${app.name}" doc:name="domain_notification" doc:id="f5c9baea-2294-4a6d-af69-de8b3d99e429" variableName="domain_notification" />
+                <set-variable value="#[&quot;ERROR &quot; ++ p(&quot;app.name&quot;) ++ &quot;: &quot; ++ error.description as String]" doc:name="message_notification" doc:id="1582ba1e-1f63-4670-89db-263749c097d4" variableName="message_notification" />
+                <cloudhub:create-notification domain="#[vars.domain_notification default &quot;api-tcct-basic-template&quot;]" doc:name="Create Notification" doc:id="69339848-e234-4d21-a151-33804180de49" priority="ERROR">
+                    <cloudhub:message><![CDATA[#[vars.message_notification default ""]]]></cloudhub:message>
+                </cloudhub:create-notification>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     <flow name="sapi-tcct-salesforce-console">
         <http:listener path="/console/*" config-ref="HTTPS_Listener_config_standard">
@@ -34,20 +32,23 @@ http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule
             </http:error-response>
         </http:listener>
         <apikit:console config-ref="sapi-tcct-salesforce-config" />
-		<error-handler >
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4ba4938a-435a-49c4-9f09-c0ba478e69a3" when="vars.httpStatus &gt;= 500">
-				<set-variable value="${app.name}" doc:name="domain_notification" doc:id="eeb4c0ac-eacb-4199-a257-90d918302323" variableName="domain_notification" />
-				<set-variable value='#["ERROR " ++ p("app.name") ++ ": " ++ error.description as String]' doc:name="message_notification" doc:id="5d4fcff4-b51a-4135-b085-97f7bc8185fe" variableName="message_notification" />
-				<cloudhub:create-notification domain='#[vars.domain_notification default "api-tcct-basic-template"]' doc:name="Create Notification" doc:id="87334a7e-0fb2-4a49-83ea-78c2591f846c" priority="ERROR" >
-					<cloudhub:message ><![CDATA[#[vars.message_notification default ""]]]></cloudhub:message>
-				</cloudhub:create-notification>
-			</on-error-propagate>
-		</error-handler>
+        <error-handler>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4ba4938a-435a-49c4-9f09-c0ba478e69a3" when="vars.httpStatus &gt;= 500">
+                <set-variable value="${app.name}" doc:name="domain_notification" doc:id="eeb4c0ac-eacb-4199-a257-90d918302323" variableName="domain_notification" />
+                <set-variable value="#[&quot;ERROR &quot; ++ p(&quot;app.name&quot;) ++ &quot;: &quot; ++ error.description as String]" doc:name="message_notification" doc:id="5d4fcff4-b51a-4135-b085-97f7bc8185fe" variableName="message_notification" />
+                <cloudhub:create-notification domain="#[vars.domain_notification default &quot;api-tcct-basic-template&quot;]" doc:name="Create Notification" doc:id="87334a7e-0fb2-4a49-83ea-78c2591f846c" priority="ERROR">
+                    <cloudhub:message><![CDATA[#[vars.message_notification default ""]]]></cloudhub:message>
+                </cloudhub:create-notification>
+            </on-error-propagate>
+        </error-handler>
     </flow>
-    <flow name="get:\salesforce\opportunity\(code-opportunity):sapi-tcct-salesforce-config">
-		<flow-ref doc:name="Flow Reference" doc:id="d86f8f4c-0bb2-4f16-be02-96bd91d9e93e" name="subflow-salesforce-opportunity-codeopportunity-get"/>
+	<flow name="get:\salesforce\opportunity\(code-opportunity):sapi-tcct-salesforce-config">
+        <flow-ref doc:name="Flow Reference" doc:id="d86f8f4c-0bb2-4f16-be02-96bd91d9e93e" name="subflow-salesforce-opportunity-codeopportunity-get" />
     </flow>
     <flow name="get:\salesforce\(id-file):sapi-tcct-salesforce-config">
-		<flow-ref doc:name="Flow Reference" doc:id="dced05c5-f7fd-43cb-9783-cf8cb403af00" name="subflow-salesforce-idfile-get"/>
+        <flow-ref doc:name="Flow Reference" doc:id="dced05c5-f7fd-43cb-9783-cf8cb403af00" name="subflow-salesforce-idfile-get" />
+    </flow>
+    <flow name="get:\salesforce\offer\(code-offer):sapi-tcct-salesforce-config">
+		<flow-ref doc:name="Flow Reference" doc:id="2ed15793-5b2c-4020-bc46-930653e8d5c7" name="subflow-salesforce-offer-codeoffer-get"/>
     </flow>
 </mule>

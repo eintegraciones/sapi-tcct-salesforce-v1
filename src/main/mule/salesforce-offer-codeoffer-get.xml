@@ -8,43 +8,42 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
 http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd
 http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
-	<sub-flow name="subflow-salesforce-opportunity-codeopportunity-get" doc:id="28292036-0cdc-4e0a-b824-cc1958269008" >
-		<json-logger:logger doc:name="START FLOW DOWNLOAD FILE OPPORTUNITY" doc:id="26e7f461-c0ad-4174-842d-6bf6f1b2d15e" config-ref="JSON_Logger_Config" message="START FLOW DOWNLOAD FILE OPPORTUNITY"/>
-		<set-variable value="#[attributes.uriParams.'code-opportunity' default '']" doc:name="codigo-oportunidad" doc:id="cad05c10-6ad3-480d-8809-32633a4384df" variableName="code-opportunity" />
-		<json-logger:logger doc:name="FLOW CODE OPORTUNIDAD" doc:id="4cc3747a-2294-42d9-bf0b-fae053bc3979" config-ref="JSON_Logger_Config" message="#['FLOW codigo-oprtunidad:' ++ vars.&quot;code-opportunity&quot; default '']" tracePoint="FLOW" priority="DEBUG"/>
-		<salesforce:query doc:name="Query_Oportunidad" doc:id="45daaa83-e8d8-48ba-9797-403af3eb20db" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query><![CDATA[SELECT Id FROM Opportunity WHERE SP_Id__c = ':CODIGO_OPORTUNIDAD']]></salesforce:salesforce-query>
+	<sub-flow name="subflow-salesforce-offer-codeoffer-get" doc:id="28292036-0cdc-4e0a-b824-cc1958269008" >
+		<json-logger:logger doc:name="START FLOW DOWNLOAD FILE OFFER" doc:id="26e7f461-c0ad-4174-842d-6bf6f1b2d15e" config-ref="JSON_Logger_Config" message="START FLOW DOWNLOAD FILE OFFER"/>
+		<set-variable value="#[attributes.uriParams.'code-offer' default '']" doc:name="codigo-oferta" doc:id="cad05c10-6ad3-480d-8809-32633a4384df" variableName="code-offer" />
+		<salesforce:query doc:name="Query_IdOffer" doc:id="6ec70ce9-3286-463e-8ea9-e14b6926288f" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[SELECT Id FROM Quote WHERE QuoteNumber = ':CODIGO_OFERTA']]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/java
 ---
 {
-	CODIGO_OPORTUNIDAD : vars."code-opportunity"
+	CODIGO_OFERTA : vars."code-offer"
 }]]]></salesforce:parameters>
 		</salesforce:query>
-		<set-variable value="#[payload[0].Id default '']" doc:name="id-oportunidad" doc:id="5d3c9f73-b3fa-41c0-98d7-ddb5e3318fc2" variableName="id-oportunidad" />
-		<json-logger:logger doc:name="FLOW IDOPORTUNIDAD" doc:id="1b566a21-8b74-4e82-824e-4cca348c2d07" config-ref="JSON_Logger_Config" message="#['FLOW id-oprtunidad:' ++ vars.&quot;id-oportunidad&quot; default '']" tracePoint="FLOW" priority="DEBUG" />
-		<salesforce:query doc:name="Query_Select_file_oportunidad" doc:id="17cd8bf3-8ac0-4307-8ed7-b07aea823d70" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query><![CDATA[SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = ':ID_OPORTUNIDAD'
+		<set-variable value="#[payload[0].Id default '']" doc:name="id-oferta" doc:id="a0756e6c-7953-4b26-a6ee-1cf972d86a35" variableName="id-oferta" />
+		<json-logger:logger doc:name="FLOW CODE OFFER" doc:id="4cc3747a-2294-42d9-bf0b-fae053bc3979" config-ref="JSON_Logger_Config" message="#['FLOW codigo-oferta:' ++ vars.&quot;code-offer&quot; default '']" tracePoint="FLOW" priority="DEBUG"/>
+		<salesforce:query doc:name="Query_Select_file_oferta" doc:id="17cd8bf3-8ac0-4307-8ed7-b07aea823d70" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = ':ID_OFERTA'
 ]]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/java
 ---
 {
-	ID_OPORTUNIDAD : vars."id-oportunidad"
+	ID_OFERTA : vars."id-oferta"
 }]]]></salesforce:parameters>
 		</salesforce:query>
 		<choice doc:name="Choice" doc:id="3f3a4679-cf0f-4f63-a113-6764a47f0775" >
 			<when expression='#[!isEmpty(payload)]'>
-				<json-logger:logger doc:name="FOUND FILE OPPORTUNITY" doc:id="fb3b9b25-d9d8-41ac-bd26-d361749ce5c8" config-ref="JSON_Logger_Config" message="FOUND FILE OPPORTUNITY" tracePoint="FLOW" priority="DEBUG"/>
-				<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;[] as Array]" doc:name="aFileOpprtunity" doc:id="3def3fac-d1c6-4a82-b0b4-026f949abc8f" variableName="aFileOpprtunity" />
+				<json-logger:logger doc:name="FOUND FILE OFFER" doc:id="fb3b9b25-d9d8-41ac-bd26-d361749ce5c8" config-ref="JSON_Logger_Config" message="FOUND FILE OFFER" tracePoint="FLOW" priority="DEBUG"/>
+				<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;[] as Array]" doc:name="aFileOffer" doc:id="3def3fac-d1c6-4a82-b0b4-026f949abc8f" variableName="aFileOffer" />
 				<json-logger:logger doc:name="ID FILE" doc:id="49950952-fd54-4f1f-a7c3-fa4dfd3afe46" config-ref="JSON_Logger_Config" message="#['ID FICHERO DE LA OPRTUNIDAD ' ++ (vars.&quot;code-opportunity&quot; default '')]" tracePoint="FLOW" priority="DEBUG" />
 				<foreach doc:name="For Each" doc:id="f006d7c3-3723-4ee9-95fc-8441581470d2" collection="payload">
 			<ee:transform doc:name="Transform Message" doc:id="c06d075e-480a-41bf-8476-97020bed1b55">
 				<ee:message>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="aFileOpprtunity"><![CDATA[%dw 2.0
+					<ee:set-variable variableName="aFileOffer"><![CDATA[%dw 2.0
 output application/json
 ---
-flatten(vars.*aFileOpprtunity ++ [{"id-file": payload.ContentDocumentId}])]]></ee:set-variable>
+flatten(vars.*aFileOffer ++ [{"id-file": payload.ContentDocumentId}])]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 		</foreach>
@@ -53,7 +52,7 @@ flatten(vars.*aFileOpprtunity ++ [{"id-file": payload.ContentDocumentId}])]]></e
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-vars.aFileOpprtunity]]></ee:set-payload>
+vars.aFileOffer]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 			</when>
@@ -63,11 +62,11 @@ vars.aFileOpprtunity]]></ee:set-payload>
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-["codigo de oportunidad no existe"]]]></ee:set-payload>
+["codigo de oferta no existe"]]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
 			</otherwise>
 		</choice>
-		<json-logger:logger doc:name="END FLOW DOWNLOAD FILE OPPORTUNITY" doc:id="fd7f5589-bf96-4046-a7d4-b838e3cf399f" config-ref="JSON_Logger_Config" message="END FLOW DOWNLOAD FILE OPPORTUNITY" tracePoint="END" />
+		<json-logger:logger doc:name="END FLOW DOWNLOAD FILE OFFER" doc:id="fd7f5589-bf96-4046-a7d4-b838e3cf399f" config-ref="JSON_Logger_Config" message="END FLOW DOWNLOAD FILE OFFER" tracePoint="END" />
 	</sub-flow>
 </mule>

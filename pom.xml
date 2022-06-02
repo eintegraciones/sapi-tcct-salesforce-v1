@@ -96,13 +96,6 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>fec2cd0e-9561-49a5-89d5-74b28062ae28</groupId>
-			<artifactId>sapi-tcct-salesforce</artifactId>
-			<version>1.0.1</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
-		<dependency>
 			<groupId>85db92ef-760e-450f-a9af-7f855abafc18</groupId>
 			<artifactId>mule-cloudhub-connector-token</artifactId>
 			<version>2.0.24</version>
@@ -113,6 +106,13 @@
 			<artifactId>mule-validation-module</artifactId>
 			<version>1.4.5</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>fec2cd0e-9561-49a5-89d5-74b28062ae28</groupId>
+			<artifactId>sapi-tcct-salesforce</artifactId>
+			<version>1.0.2</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 
