@@ -8,12 +8,14 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
 http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
 	<sub-flow name="subflow-salesforce-idfile-get" doc:id="5f0ab502-bf06-4e82-977a-8ebac636038d" >
-		<json-logger:logger doc:name="START FLOW DOWNLOAD FILE" doc:id="d58ac516-8d4e-4d45-9603-731ba4d940db" config-ref="JSON_Logger_Config" message="START FLOW DOWNLOAD FILE" />
+		<json-logger:logger doc:name="START FLOW DOWNLOAD FILE" doc:id="d58ac516-8d4e-4d45-9603-731ba4d940db" config-ref="JSON_Logger_Config" message="#['START FLOW DOWNLOAD FILE ' ++ attributes.uriParams.'id-file' default '']" />
 		<set-variable value="#[attributes.uriParams.'id-file']" doc:name="id-file" doc:id="2cf641f8-ac9d-4a2a-b361-9d161f953981" variableName="id-file"/>
 		<json-logger:logger doc:name="FLOW ID FILE" doc:id="1ac77903-1ee3-4e56-8c7f-82702f53caa9" config-ref="JSON_Logger_Config" message="#['FLOW ID FILE' ++ (vars.&quot;id-file&quot; default '')]" priority="DEBUG"/>
 		<try doc:name="Try" doc:id="31860173-8538-4ead-8e08-4c11a4616332" >
-			<salesforce:query doc:name="Query_download_file" doc:id="f35e0dc3-6591-474c-ba15-2eff3f6c17f9" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query><![CDATA[SELECT FileExtension,Title,VersionData FROM ContentVersion WHERE ContentDocumentId = ':ID_DOCUMENT']]></salesforce:salesforce-query>
+			<salesforce:query doc:name="Query_download_file" doc:id="f35e0dc3-6591-474c-ba15-2eff3f6c17f9" config-ref="Salesforce_Config" readTimeout="300" readTimeoutUnit="SECONDS">
+			<repeatable-in-memory-iterable maxBufferSize="1000" />
+				<reconnect frequency="5000" count="3" />
+				<salesforce:salesforce-query><![CDATA[SELECT FileExtension,Title,VersionData FROM ContentVersion WHERE ContentDocumentId = ':ID_DOCUMENT']]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/java
 ---
 {
