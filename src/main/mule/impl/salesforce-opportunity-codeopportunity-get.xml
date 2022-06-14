@@ -53,7 +53,10 @@ flatten(vars.*aFileOpprtunity ++ [{"id-file": payload.ContentDocumentId}])]]></e
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-vars.aFileOpprtunity]]></ee:set-payload>
+{
+	code: 200,
+	"list-opportunity": vars.aFileOpprtunity default []
+}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 			</when>
@@ -63,7 +66,10 @@ vars.aFileOpprtunity]]></ee:set-payload>
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-["codigo de oportunidad no existe"]]]></ee:set-payload>
+{
+	code: 404,
+	"list-opportunity": ["codigo de oportunidad no existe"]
+}]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
 			</otherwise>
