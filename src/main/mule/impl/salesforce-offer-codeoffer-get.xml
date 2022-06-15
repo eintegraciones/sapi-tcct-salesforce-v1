@@ -52,7 +52,11 @@ flatten(vars.*aFileOffer ++ [{"id-file": payload.ContentDocumentId}])]]></ee:set
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-vars.aFileOffer]]></ee:set-payload>
+{
+	code: 200,
+	"list-offer": vars.aFileOffer default []
+}
+]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 			</when>
@@ -62,7 +66,10 @@ vars.aFileOffer]]></ee:set-payload>
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-["codigo de oferta no existe"]]]></ee:set-payload>
+{
+	code: 404,
+	"list-offer": ["codigo de oferta no existe"]
+}]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
 			</otherwise>
