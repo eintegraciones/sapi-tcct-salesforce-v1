@@ -13,7 +13,6 @@ http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule
 		<json-logger:logger doc:name="FLOW ID FILE" doc:id="1ac77903-1ee3-4e56-8c7f-82702f53caa9" config-ref="JSON_Logger_Config" message="#['FLOW ID FILE' ++ (vars.&quot;id-file&quot; default '')]" priority="DEBUG"/>
 		<try doc:name="Try" doc:id="31860173-8538-4ead-8e08-4c11a4616332" >
 			<salesforce:query doc:name="Query_download_file" doc:id="f35e0dc3-6591-474c-ba15-2eff3f6c17f9" config-ref="Salesforce_Config" readTimeout="300" readTimeoutUnit="SECONDS">
-			<repeatable-in-memory-iterable maxBufferSize="1000" />
 				<reconnect frequency="5000" count="3" />
 				<salesforce:salesforce-query><![CDATA[SELECT FileExtension,Title,VersionData FROM ContentVersion WHERE ContentDocumentId = ':ID_DOCUMENT']]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/java
