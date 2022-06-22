@@ -14,7 +14,7 @@ http://www.mulesoft.org/schema/mule/amazon-lambda http://www.mulesoft.org/schema
 http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
 http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
-    <apikit:config name="sapi-tcct-salesforce-config" api="resource::fec2cd0e-9561-49a5-89d5-74b28062ae28:sapi-tcct-salesforce:1.0.2:raml:zip:sapi-tcct-salesforce.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="sapi-tcct-salesforce-config" api="resource::663a0048-7c7b-47be-9b95-bde284c854c9:sapi-tcct-salesforce:1.0.0:raml:zip:sapi-tcct-salesforce.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <apikit:config name="healthcheck-config" api="api\healthcheck.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 	<json-logger:config name="JSON_Logger_Config" doc:name="JSON Logger Config" doc:id="635bf38b-3391-4e05-b1f6-8f8019dc7440" environment="${mule.env}" prettyPrint="false" logLocationInfo="false" disabledFields="content"/>
 	<configuration doc:name="Configuration" doc:id="69deda10-14cd-43be-af70-f529b48f4359" defaultErrorHandler-ref="Global_Error_Handler" />
