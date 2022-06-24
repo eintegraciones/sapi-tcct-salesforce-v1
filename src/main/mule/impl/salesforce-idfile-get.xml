@@ -54,7 +54,8 @@ output application/json
   "fileName": 'id file no existe',
   "fileExtension": 'id file no existe',
   "bytes": '',
-  "type-bytes": "id file no existe"
+  "type-bytes": "id file no existe",
+  "code": 'ER-TCCT-100'
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
@@ -66,10 +67,11 @@ output application/json
 output application/json
 ---
 {
-  "fileName": 'file es muy grande',
-  "fileExtension": 'file es muy grande',
+  "fileName": payload[0].Title default '',
+  "fileExtension": payload[0].FileExtension default '',
   "bytes": '',
-  "type-bytes": "file es muy grande"
+  "type-bytes": "fichero es mas grande 10Mb",
+  "code": 'ER-TCCT-101'
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
@@ -85,7 +87,8 @@ output application/json
   "fileName": payload[0].Title default '',
   "fileExtension": payload[0].FileExtension default '',
   "bytes": payload[0].VersionData default '',
-  "type-bytes": "base64"
+  "type-bytes": "base64",
+  "code": '200'
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
