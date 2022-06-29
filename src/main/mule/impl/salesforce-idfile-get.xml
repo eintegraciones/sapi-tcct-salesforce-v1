@@ -12,9 +12,9 @@ http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule
 		<set-variable value="#[attributes.uriParams.'id-file']" doc:name="id-file" doc:id="2cf641f8-ac9d-4a2a-b361-9d161f953981" variableName="id-file"/>
 		<json-logger:logger doc:name="FLOW ID FILE" doc:id="1ac77903-1ee3-4e56-8c7f-82702f53caa9" config-ref="JSON_Logger_Config" message="#['FLOW ID FILE' ++ (vars.&quot;id-file&quot; default '')]" priority="DEBUG"/>
 		<try doc:name="Try" doc:id="31860173-8538-4ead-8e08-4c11a4616332" >
-			<salesforce:query doc:name="Query_download_file" doc:id="f35e0dc3-6591-474c-ba15-2eff3f6c17f9" config-ref="Salesforce_Config" readTimeout="300" readTimeoutUnit="SECONDS">
+			<salesforce:query doc:name="Query_getsize_file" doc:id="f35e0dc3-6591-474c-ba15-2eff3f6c17f9" config-ref="Salesforce_Config" readTimeout="300" readTimeoutUnit="SECONDS">
 				<reconnect frequency="5000" count="3" />
-				<salesforce:salesforce-query><![CDATA[SELECT FileExtension,Title,ContentSize,VersionData FROM ContentVersion WHERE ContentDocumentId = ':ID_DOCUMENT']]></salesforce:salesforce-query>
+				<salesforce:salesforce-query><![CDATA[SELECT FileExtension,Title,ContentSize FROM ContentVersion WHERE ContentDocumentId = ':ID_DOCUMENT']]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/java
 ---
 {
@@ -78,6 +78,29 @@ output application/json
 			
 			</when>
 			<otherwise>
+				<try doc:name="Try" doc:id="f52472c0-b422-4e79-9018-82198f938635" >
+					<salesforce:query doc:name="Query_download_file" doc:id="b27f2e9d-eec7-49de-b228-7d66bd4ec1b3" config-ref="Salesforce_Config" readTimeout="300" readTimeoutUnit="SECONDS" >
+						<reconnect frequency="5000" count="3" />
+						<salesforce:salesforce-query ><![CDATA[SELECT FileExtension,Title,ContentSize,VersionData FROM ContentVersion WHERE ContentDocumentId = ':ID_DOCUMENT']]></salesforce:salesforce-query>
+						<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	ID_DOCUMENT : vars."id-file"
+}]]]></salesforce:parameters>
+					</salesforce:query>
+					<error-handler >
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c4dd2f8f-25e2-4676-aa37-edfb4dc3e789" when='error.cause.message contains "invalid ID field"' >
+							<ee:transform doc:name="Transform Message" doc:id="7537b722-e2e1-4389-b8bc-411420eee54c" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[{VersionData:null}]]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</on-error-continue>
+					</error-handler>
+				</try>
 				<ee:transform doc:name="Transform Message" doc:id="06339c7f-8d7e-43ee-8e0c-a491d330c126">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
