@@ -68,7 +68,7 @@ output application/json
 ---
 {
 	code: 404,
-	"list-opportunity": ["codigo de oportunidad no existe"]
+	"list-opportunity": ["El código de oportunidad no existe o no tiene ningún fichero adjunto"]
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
